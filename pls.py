@@ -54,7 +54,7 @@ def select(playlist, playlist_idx, playlist_len):
                 new_selection = True
             case '\r':
                 subprocess.run(['mpv', playlist[playlist_idx]["url"]])
-                break
+                new_selection = True
 
         if new_selection:
             draw(playlist_idx, playlist, playlist_len)
