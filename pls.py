@@ -55,6 +55,9 @@ def select(playlist, playlist_idx, playlist_len):
             case '\r':
                 subprocess.run(['mpv', playlist[playlist_idx]["url"]])
                 new_selection = True
+            case 'v':
+                subprocess.run(['mpv', playlist[playlist_idx]["url"], '-ytdl-format="299+bestaudio"'])
+                new_selection = True
 
         if new_selection:
             draw(playlist_idx, playlist, playlist_len)
