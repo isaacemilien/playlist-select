@@ -56,7 +56,7 @@ def select(playlist, playlist_idx, playlist_len):
                 subprocess.run(['mpv', playlist[playlist_idx]["url"]])
                 new_selection = True
             case 'v':
-                subprocess.run(['mpv', playlist[playlist_idx]["url"], '-ytdl-format="299+bestaudio"'])
+                subprocess.run(['mpv', playlist[playlist_idx]["url"], '-ytdl-format=299+bestaudio'])
                 new_selection = True
 
         if new_selection:
