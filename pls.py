@@ -5,9 +5,9 @@ import sys
 import termios
 import tty
 
-def get_playlist_data(url):
+def get_playlist_data(url, items):
     result = subprocess.run(
-        ['yt-dlp', '-J', '--flat-playlist', url],
+        ['yt-dlp', '-J', '--flat-playlist', '--playlist-items', '1-' + str(items), url],
         capture_output=True,
         text=True,
         check=True
@@ -65,8 +65,9 @@ def select(playlist, playlist_idx, playlist_len):
 
 
 playlist_url = sys.argv[1]
+playlist_items = sys.argv[2] if len(sys.argv) > 2 else 50
 
-playlist = get_playlist_data(playlist_url)["entries"]
+playlist = get_playlist_data(playlist_url, playlist_items)["entries"]
 playlist_len = len(playlist)
 playlist_idx = 0
 
