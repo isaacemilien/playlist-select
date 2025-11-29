@@ -46,10 +46,10 @@ def select(playlist, playlist_idx, playlist_len):
         match key:
             case 'q':
                 sys.exit(0) 
-            case 'j':
+            case 'j' | '\033[B':
                 playlist_idx += 1
                 new_selection = True
-            case 'k':
+            case 'k' | '\033[A':
                 playlist_idx -= 1
                 new_selection = True
             case '\r':
