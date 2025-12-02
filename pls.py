@@ -35,7 +35,7 @@ def draw(playlist_idx, playlist, playlist_len):
 
     for i in range(low, high):
         pref = ">" if i == playlist_idx else " "
-        print(pref, playlist[i]["title"] )
+        print(pref, str(i + 1) + ".",playlist[i]["title"] )
 
 def select(playlist, playlist_idx, playlist_len):
     draw(playlist_idx, playlist, playlist_len)
