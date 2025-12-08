@@ -37,7 +37,7 @@ def draw(playlist_idx, playlist, playlist_len):
         pref = ">" if i == playlist_idx else " "
         print(pref, str(i + 1) + ".",playlist[i]["title"] )
 
-def select(playlist, playlist_idx, playlist_len):
+def select(playlist, playlist_idx, playlist_len, default_mpv_command):
     draw(playlist_idx, playlist, playlist_len)
     
     while True: 
@@ -53,23 +53,24 @@ def select(playlist, playlist_idx, playlist_len):
                 playlist_idx -= 1
                 new_selection = True
             case '\r':
-                subprocess.run(['mpv', playlist[playlist_idx]["url"]])
+                subprocess.run(default_mpv_command + [playlist[playlist_idx]["url"]])
                 new_selection = True
             case 'v':
-                subprocess.run(['mpv', playlist[playlist_idx]["url"], '-ytdl-format=299+bestaudio'])
+                subprocess.run(default_mpv_command + [playlist[playlist_idx]["url"], '-ytdl-format=299+bestaudio'])
                 new_selection = True
 
         if new_selection:
             draw(playlist_idx, playlist, playlist_len)
             new_selection = False
 
+PLAYLIST_URL = sys.argv[1]
+PLAYLIST_ITEMS = sys.argv[2] if len(sys.argv) > 2 else 50
 
-playlist_url = sys.argv[1]
-playlist_items = sys.argv[2] if len(sys.argv) > 2 else 50
-
-playlist = get_playlist_data(playlist_url, playlist_items)["entries"]
-playlist_len = len(playlist)
+PLAYLIST = get_playlist_data(PLAYLIST_URL, PLAYLIST_ITEMS)["entries"]
+PLAYLIST_LEN = len(PLAYLIST)
 playlist_idx = 0
 
-select(playlist, playlist_idx, playlist_len)
+DEFAULT_MPV_COMMAND = ['mpv', '--ytdl-raw-options=cookies-from-browser=firefox']
+
+select(PLAYLIST, playlist_idx, PLAYLIST_LEN, DEFAULT_MPV_COMMAND)
 
