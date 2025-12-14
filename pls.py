@@ -27,14 +27,14 @@ def get_key():
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
-def draw(playlist_idx, playlist, playlist_len):
+def draw(playlist_idx, playlist, playlist_len, selection_char = ">"):
     print('\033[2J\033[H', end='')
 
     low = playlist_idx - (playlist_idx % 10) 
     high = playlist_len if low + 10 > playlist_len else low + 10
 
     for i in range(low, high):
-        pref = ">" if i == playlist_idx else " "
+        pref = selection_char if i == playlist_idx else " "
         print(pref, str(i + 1) + ".",playlist[i]["title"] )
 
 def select(playlist, playlist_idx, playlist_len, default_mpv_command):
@@ -53,9 +53,11 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
                 playlist_idx -= 1
                 new_selection = True
             case '\r':
+                draw(playlist_idx, playlist, playlist_len, "    >")
                 subprocess.run(default_mpv_command + [playlist[playlist_idx]["url"]])
                 new_selection = True
             case 'v':
+                draw(playlist_idx, playlist, playlist_len, "    >")
                 subprocess.run(default_mpv_command + [playlist[playlist_idx]["url"], '-ytdl-format=299+bestaudio'])
                 new_selection = True
 
