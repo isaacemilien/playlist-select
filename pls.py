@@ -4,15 +4,37 @@ import subprocess
 import sys
 import termios
 import tty
+import requests
 
-def get_playlist_data(url, items):
+def populate_playlist_interface(raw_dump, url, title):
+
+    playlist_interface = []
+
+    for entry in raw_dump["entries"]:
+        playlist_interface.append({'url': entry[url], 'title': entry[title]})
+
+    return playlist_interface
+
+def get_playlist_data(url, items, get_playlist_api = None):
+    if get_playlist_api:
+        payload = {'url': url, 'items': str(items)}
+
+        r = requests.post(get_playlist_api, json=payload)
+
+        raw_dump = json.loads(r.text)
+
+        return populate_playlist_interface(raw_dump, 'url', 'title')
+
     result = subprocess.run(
         ['yt-dlp', '-J', '--flat-playlist', '--playlist-items', '1-' + str(items), url],
         capture_output=True,
         text=True,
         check=True
     )
-    return json.loads(result.stdout)
+
+    raw_dump = json.loads(result.stdout)
+
+    return populate_playlist_interface(raw_dump, 'url', 'title')
 
 def get_key():
     fd = sys.stdin.fileno()
@@ -67,8 +89,9 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
 
 PLAYLIST_URL = sys.argv[1]
 PLAYLIST_ITEMS = sys.argv[2] if len(sys.argv) > 2 else 50
+GET_PLAYLIST_API = sys.argv[3] if len (sys.argv) > 3 else None
 
-PLAYLIST = get_playlist_data(PLAYLIST_URL, PLAYLIST_ITEMS)["entries"]
+PLAYLIST = get_playlist_data(PLAYLIST_URL, PLAYLIST_ITEMS, GET_PLAYLIST_API)
 PLAYLIST_LEN = len(PLAYLIST)
 playlist_idx = 0
 

@@ -14,11 +14,22 @@
         src = ./.;
         format = "other";
 
+        propagatedBuildInputs = with pkgs.python3Packages; [
+          requests
+        ];
+
         installPhase = ''
           mkdir -p $out/bin
           cp pls.py $out/bin/pls
           chmod +x $out/bin/pls
         '';
+      };
+
+      devShells.${system}.default = pkgs.mkShell {
+        buildInputs = with pkgs.python3Packages; [
+          python
+          requests
+        ];
       };
     };
 }
