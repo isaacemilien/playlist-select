@@ -74,6 +74,12 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
             case 'k' | '\033[A':
                 playlist_idx -= 1
                 new_selection = True
+            case 'J' | '\033[B':
+                playlist_idx += 10
+                new_selection = True
+            case 'K' | '\033[A':
+                playlist_idx -= 10
+                new_selection = True
             case '\r':
                 draw(playlist_idx, playlist, playlist_len, "    >")
                 subprocess.run(default_mpv_command + [playlist[playlist_idx]["url"]])
