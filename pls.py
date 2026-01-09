@@ -68,16 +68,19 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
         match key:
             case 'q':
                 sys.exit(0) 
+            case 'p':
+                print("\n\nExit with playlist url: ", playlist[playlist_idx]["url"])
+                sys.exit(0) 
             case 'j' | '\033[B':
                 playlist_idx += 1
                 new_selection = True
             case 'k' | '\033[A':
                 playlist_idx -= 1
                 new_selection = True
-            case 'J' | '\033[B':
+            case 'J':
                 playlist_idx += 10
                 new_selection = True
-            case 'K' | '\033[A':
+            case 'K':
                 playlist_idx -= 10
                 new_selection = True
             case '\r':
