@@ -23,9 +23,9 @@ You can also use:
 # Examples
 List first 50 results from playlist:
 
-    `pls https://www.youtube.com/@ethoslab/videos`
+    pls https://www.youtube.com/@ethoslab/videos
 
 Limiting results to specific amount:
 
-    `pls https://www.youtube.com/@ethoslab/videos 120` 
+    pls https://www.youtube.com/@ethoslab/videos 120 
 
