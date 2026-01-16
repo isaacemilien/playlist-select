@@ -7,7 +7,6 @@ import tty
 import requests
 
 def populate_playlist_interface(raw_dump, url, title):
-
     playlist_interface = []
 
     for entry in raw_dump["entries"]:
@@ -50,6 +49,14 @@ def get_key():
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
 def draw(playlist_idx, playlist, playlist_len, selection_char = ">"):
+    """Prints all entries in playlist, takes given index and prepends ">" character to signify current selection
+
+    Args: 
+        playlist_idx: The playlist index to prepend selection character to.
+        playlist: Dictionary representing current playlist.
+        playlist_len: Number representing length of playlist.
+        selection_char: Character to prepend to currently selected element
+    """
     print('\033[2J\033[H', end='')
 
     low = playlist_idx - (playlist_idx % 10) 
@@ -60,6 +67,11 @@ def draw(playlist_idx, playlist, playlist_len, selection_char = ">"):
         print(pref, str(i + 1) + ".",playlist[i]["title"] )
 
 def select(playlist, playlist_idx, playlist_len, default_mpv_command):
+    playlists = []
+    playlists.append({
+        "playlist_data": playlist, 
+        "playlist_idx": playlist_idx})
+
     draw(playlist_idx, playlist, playlist_len)
     
     while True: 
@@ -83,6 +95,26 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
             case 'K':
                 playlist_idx -= 10
                 new_selection = True
+            case 'l':
+                # FIX INDENT ON PLAYLISTS
+                # FIX CRASH ON NO TITLE, SHOULD JUST DEFAULT TO URL OR SOMETHING
+                # ADD LITTLE PRINT AT TOP OF PLAYLISTS FOR THE CURRENT PLAYLISTS SO THAT IS SHOWS INDENTATION LEVEL
+
+                # add in queue here to represent playlist hierarchy
+                playlists[-1]["playlist_idx"] = playlist_idx
+
+                playlists.append({
+                    "playlist_data": get_playlist_data(playlist[playlist_idx]["url"], PLAYLIST_ITEMS, GET_PLAYLIST_API), 
+                    "playlist_idx": playlist_idx})
+
+                playlist = playlists[-1]["playlist_data"]
+                playlist_idx = 0
+                new_selection = True
+            case 'h':
+                playlists.pop()
+                playlist = playlists[-1]["playlist_data"]
+                playlist_idx = playlists[-1]["playlist_idx"]
+                new_selection = True
             case '\r':
                 draw(playlist_idx, playlist, playlist_len, "    >")
                 subprocess.run(default_mpv_command + [playlist[playlist_idx]["url"]])
@@ -96,7 +128,11 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
             draw(playlist_idx, playlist, playlist_len)
             new_selection = False
 
+if len(sys.argv) == 1:
+    sys.exit("Usage: pls [OPTIONS] URL [URL...] \n\nplaylist-select: error: You must provide at least one URL.")
+
 PLAYLIST_URL = sys.argv[1]
+
 PLAYLIST_ITEMS = sys.argv[2] if len(sys.argv) > 2 else 50
 GET_PLAYLIST_API = sys.argv[3] if len (sys.argv) > 3 else None
 
