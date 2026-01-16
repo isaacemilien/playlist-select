@@ -128,7 +128,11 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
             draw(playlist_idx, playlist, playlist_len)
             new_selection = False
 
+if len(sys.argv) == 1:
+    sys.exit("Usage: pls [OPTIONS] URL [URL...] \n\nplaylist-select: error: You must provide at least one URL.")
+
 PLAYLIST_URL = sys.argv[1]
+
 PLAYLIST_ITEMS = sys.argv[2] if len(sys.argv) > 2 else 50
 GET_PLAYLIST_API = sys.argv[3] if len (sys.argv) > 3 else None
 
