@@ -14,16 +14,7 @@ def populate_playlist_interface(raw_dump, url, title):
 
     return playlist_interface
 
-def get_playlist_data(url, items, get_playlist_api = None):
-    if get_playlist_api:
-        payload = {'url': url, 'items': str(items)}
-
-        r = requests.post(get_playlist_api, json=payload)
-
-        raw_dump = json.loads(r.text)
-
-        return populate_playlist_interface(raw_dump, 'url', 'title')
-
+def get_playlist_data(url, items):
     result = subprocess.run(
         ['yt-dlp', '-J', '--flat-playlist', '--playlist-items', '1-' + str(items), url],
         capture_output=True,
@@ -131,12 +122,20 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
 if len(sys.argv) == 1:
     sys.exit("Usage: pls [OPTIONS] URL [URL...] \n\nplaylist-select: error: You must provide at least one URL.")
 
-PLAYLIST_URL = sys.argv[1]
+sys.argv.pop(0)
+PLAYLIST_URL = sys.argv.pop(0)
 
-PLAYLIST_ITEMS = sys.argv[2] if len(sys.argv) > 2 else 50
-GET_PLAYLIST_API = sys.argv[3] if len (sys.argv) > 3 else None
+playlist_items = 50 
 
-PLAYLIST = get_playlist_data(PLAYLIST_URL, PLAYLIST_ITEMS, GET_PLAYLIST_API)
+for arg in sys.argv:
+    if "=" in arg:
+        split_arg = arg.split("=")
+
+        match split_arg[0]:
+            case "--items" | "-i":
+                playlist_items = split_arg[1]
+
+PLAYLIST = get_playlist_data(PLAYLIST_URL, playlist_items)
 PLAYLIST_LEN = len(PLAYLIST)
 playlist_idx = 0
 
