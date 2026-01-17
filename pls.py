@@ -9,6 +9,9 @@ import requests
 def populate_playlist_interface(raw_dump, url, title):
     playlist_interface = []
 
+    if title not in raw_dump["entries"][0]:
+        title = url
+
     for entry in raw_dump["entries"]:
         playlist_interface.append({'url': entry[url], 'title': entry[title]})
 
@@ -95,7 +98,7 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
                 playlists[-1]["playlist_idx"] = playlist_idx
 
                 playlists.append({
-                    "playlist_data": get_playlist_data(playlist[playlist_idx]["url"], PLAYLIST_ITEMS, GET_PLAYLIST_API), 
+                    "playlist_data": get_playlist_data(playlist[playlist_idx]["url"], playlist_items), 
                     "playlist_idx": playlist_idx})
 
                 playlist = playlists[-1]["playlist_data"]
@@ -116,8 +119,10 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
                 new_selection = True
 
         if new_selection:
+            playlist_idx = playlist_idx % playlist_len
             draw(playlist_idx, playlist, playlist_len)
             new_selection = False
+
 
 if len(sys.argv) == 1:
     sys.exit("Usage: pls [OPTIONS] URL [URL...] \n\nplaylist-select: error: You must provide at least one URL.")
