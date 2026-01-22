@@ -27,5 +27,5 @@ List first 50 results from playlist:
 
 Limiting results to specific amount:
 
-    pls https://www.youtube.com/@ethoslab/videos 120 
+    pls https://www.youtube.com/@ethoslab/videos --items=120 
 
