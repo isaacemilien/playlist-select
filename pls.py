@@ -90,25 +90,29 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
                 playlist_idx -= 10
                 new_selection = True
             case 'l':
-                # FIX INDENT ON PLAYLISTS
-                # FIX CRASH ON NO TITLE, SHOULD JUST DEFAULT TO URL OR SOMETHING
-                # ADD LITTLE PRINT AT TOP OF PLAYLISTS FOR THE CURRENT PLAYLISTS SO THAT IS SHOWS INDENTATION LEVEL
+                draw(playlist_idx, playlist, playlist_len, "    >")
 
-                # add in queue here to represent playlist hierarchy
-                playlists[-1]["playlist_idx"] = playlist_idx
+                try: 
+                    playlists[-1]["playlist_idx"] = playlist_idx
 
-                playlists.append({
-                    "playlist_data": get_playlist_data(playlist[playlist_idx]["url"], playlist_items), 
-                    "playlist_idx": playlist_idx})
+                    playlists.append({
+                        "playlist_data": get_playlist_data(playlist[playlist_idx]["url"], playlist_items), 
+                        "playlist_idx": playlist_idx})
 
-                playlist = playlists[-1]["playlist_data"]
-                playlist_idx = 0
-                new_selection = True
+                    playlist = playlists[-1]["playlist_data"]
+                    playlist_idx = 0
+                    new_selection = True
+
+                except KeyError:
+                    print("\nKey error, mostly likely trying to index into a non-playlist element")
+                    new_selection = False
+
             case 'h':
-                playlists.pop()
-                playlist = playlists[-1]["playlist_data"]
-                playlist_idx = playlists[-1]["playlist_idx"]
-                new_selection = True
+                if len(playlists) > 1:
+                    playlists.pop()
+                    playlist = playlists[-1]["playlist_data"]
+                    playlist_idx = playlists[-1]["playlist_idx"]
+                    new_selection = True
             case '\r':
                 draw(playlist_idx, playlist, playlist_len, "    >")
                 subprocess.run(default_mpv_command + [playlist[playlist_idx]["url"]])
