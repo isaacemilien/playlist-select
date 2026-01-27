@@ -12,6 +12,7 @@ With both yt-dlp and mpv installed either:
 
 # Usage
 - `j` or `k` to move up and down by single entries.
+- `h` or `l` to go up and down a level of nesting in a playlist.
 - `enter` to play a playlist entry in MPV.
 - `q` to exit.
 
