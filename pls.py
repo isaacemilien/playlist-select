@@ -136,19 +136,22 @@ PLAYLIST_URL = sys.argv.pop(0)
 
 playlist_items = 50 
 
+default_mpv_command = ['mpv']
+
 for arg in sys.argv:
     if "=" in arg:
-        split_arg = arg.split("=")
+        split_arg = arg.split("=", 1)
 
         match split_arg[0]:
             case "--items" | "-i":
                 playlist_items = split_arg[1]
+            case "--mpv-raw-options" | "-r":
+                default_mpv_command.append(split_arg[1])
 
 PLAYLIST = get_playlist_data(PLAYLIST_URL, playlist_items)
 PLAYLIST_LEN = len(PLAYLIST)
 playlist_idx = 0
 
-DEFAULT_MPV_COMMAND = ['mpv', '--ytdl-raw-options=cookies-from-browser=firefox']
 
-select(PLAYLIST, playlist_idx, PLAYLIST_LEN, DEFAULT_MPV_COMMAND)
+select(PLAYLIST, playlist_idx, PLAYLIST_LEN, default_mpv_command)
 
