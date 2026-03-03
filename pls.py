@@ -18,13 +18,19 @@ def populate_playlist_interface(raw_dump, url, title):
         title = url
 
     for entry in raw_dump["entries"]:
+        # print(i)
         playlist_interface.append({'url': entry[url], 'title': entry[title]})
 
     return playlist_interface
 
-def get_playlist_data(url, items):
+def get_playlist_data(url, items = None):
+    ytdlp_command = ['yt-dlp', '-J', '--flat-playlist', url]
+
+    if items is not None: 
+        ytdlp_command.extend(['--playlist-items', '1-' + str(items)])
+
     result = subprocess.run(
-        ['yt-dlp', '-J', '--flat-playlist', '--playlist-items', '1-' + str(items), url],
+        ytdlp_command,
         capture_output=True,
         text=True,
         check=True
@@ -69,7 +75,8 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
     playlists = []
     playlists.append({
         "playlist_data": playlist, 
-        "playlist_idx": playlist_idx})
+        "playlist_idx": playlist_idx,
+        "playlist_len": len(playlist)})
 
     draw(playlist_idx, playlist, playlist_len)
     
@@ -100,12 +107,15 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
                 try: 
                     playlists[-1]["playlist_idx"] = playlist_idx
 
+                    new_playlist_data = get_playlist_data(playlist[playlist_idx]["url"]) 
                     playlists.append({
-                        "playlist_data": get_playlist_data(playlist[playlist_idx]["url"], playlist_items), 
-                        "playlist_idx": playlist_idx})
+                        "playlist_data": new_playlist_data,
+                        "playlist_idx": playlist_idx,
+                        "playlist_len": len(new_playlist_data)})
 
                     playlist = playlists[-1]["playlist_data"]
                     playlist_idx = 0
+                    playlist_len = playlists[-1]["playlist_len"]
                     new_selection = True
 
                 except KeyError:
@@ -117,6 +127,7 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
                     playlists.pop()
                     playlist = playlists[-1]["playlist_data"]
                     playlist_idx = playlists[-1]["playlist_idx"]
+                    playlist_len = playlists[-1]["playlist_len"]
                     new_selection = True
             case '\r':
                 draw(playlist_idx, playlist, playlist_len, "    >")
