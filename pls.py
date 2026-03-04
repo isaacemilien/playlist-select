@@ -140,6 +140,11 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
             case 'd':
                 download_video(playlist[playlist_idx]["url"], playlist[playlist_idx]["title"])
                 new_selection = True
+            case _:
+                print(f"No key binding found for key '{key}'.")
+
+                continue
+
 
         if new_selection:
             playlist_idx = playlist_idx % playlist_len
@@ -165,7 +170,7 @@ for arg in sys.argv:
             case "--items" | "-i":
                 playlist_items = split_arg[1]
             case "--mpv-raw-options" | "-r":
-                default_mpv_command.append(split_arg[1])
+                default_mpv_command.append("--" + split_arg[1])
 
 PLAYLIST = get_playlist_data(PLAYLIST_URL, playlist_items)
 PLAYLIST_LEN = len(PLAYLIST)
