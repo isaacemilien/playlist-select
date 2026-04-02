@@ -140,6 +140,18 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
             case 'd':
                 download_video(playlist[playlist_idx]["url"], playlist[playlist_idx]["title"])
                 new_selection = True
+            case ':':
+                user_index = input(":")
+                if user_index.isdigit():
+                    playlist_idx = int(user_index) - 1
+
+                    new_selection = True
+
+                else:
+                    print("Invalid index")
+                    
+                    continue
+
             case _:
                 print(f"No key binding found for key '{key}'.")
 
