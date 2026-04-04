@@ -10,6 +10,7 @@ def download_video(url, title):
     print(f"Downloading '{title}' to ~/Downloads/...", end='\r')
     subprocess.Popen(['yt-dlp', '-o', f'~/Downloads/%(title)s.%(ext)s', url],
                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    return "\t" + title
 
 def populate_playlist_interface(raw_dump, url, title):
     playlist_interface = []
@@ -138,7 +139,7 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
                 subprocess.run(default_mpv_command + [playlist[playlist_idx]["url"], '-ytdl-format=299+bestaudio'])
                 new_selection = True
             case 'd':
-                download_video(playlist[playlist_idx]["url"], playlist[playlist_idx]["title"])
+                playlist[playlist_idx]["title"] = download_video(playlist[playlist_idx]["url"], playlist[playlist_idx]["title"])
                 new_selection = True
             case ':':
                 user_index = input(":")
