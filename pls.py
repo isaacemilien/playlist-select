@@ -7,12 +7,27 @@ import tty
 import requests
 
 def download_video(url, title):
+    """Downloads given url to your downloads folder using yt-dlp
+
+    Args:
+        url: String URL to be downloaded.
+        title: String name given to file once downloaded.
+    """
+
     print(f"Downloading '{title}' to ~/Downloads/...", end='\r')
     subprocess.Popen(['yt-dlp', '-o', f'~/Downloads/%(title)s.%(ext)s', url],
                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     return "\t" + title
 
 def populate_playlist_interface(raw_dump, url, title):
+    """Returns uniform dictionary of playlist data based two mandatory keys
+
+    Args:
+        raw_dump: Dictionary representing unchanged playlist data fetched from yt-dlp
+        url: String representing key containing the URL in playlist items
+        url: String representing key containing the title in playlist items
+    """
+
     playlist_interface = []
 
     if title not in raw_dump["entries"][0]:
@@ -25,6 +40,13 @@ def populate_playlist_interface(raw_dump, url, title):
     return playlist_interface
 
 def get_playlist_data(url, items = None):
+    """Fetches playlist data from given URL using yt-dlp
+
+    Args:
+        url: String URL to fetch playlist data from.
+        items: Number representing upper limit of items to fetch from playlist.
+    """
+
     ytdlp_command = ['yt-dlp', '-J', '--flat-playlist', url]
 
     if items is not None: 
@@ -42,6 +64,8 @@ def get_playlist_data(url, items = None):
     return populate_playlist_interface(raw_dump, 'url', 'title')
 
 def get_key():
+    """Awaits then returns termainl key presses"""
+
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
     try:
@@ -63,6 +87,7 @@ def draw(playlist_idx, playlist, playlist_len, selection_char = ">"):
         playlist_len: Number representing length of playlist.
         selection_char: Character to prepend to currently selected element
     """
+
     print('\033[2J\033[H', end='')
 
     low = playlist_idx - (playlist_idx % 10) 
@@ -73,6 +98,15 @@ def draw(playlist_idx, playlist, playlist_len, selection_char = ">"):
         print(pref, str(i + 1) + ".",playlist[i]["title"] )
 
 def select(playlist, playlist_idx, playlist_len, default_mpv_command):
+    """Main loop, new cycles are triggered by key press events as opposed to on a set interval
+
+    Args:
+        playlist: Dictionary representing current playlist.
+        playlist_idx: The playlist index to prepend selection character to.
+        playlist_len: Number representing length of playlist.
+        default_mpv_command: String representing base mpv and default configurations used in all calls.
+    """
+
     playlists = []
     playlists.append({
         "playlist_data": playlist, 
