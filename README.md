@@ -11,7 +11,7 @@ With both yt-dlp and mpv installed either:
 - Or simply clone and directly use with python.
 
 # Usage
-- `j` or `k` to move up and down by single entries.
+- `j` or `k` (or up/down arrows) to move up and down by single entries.
 - `h` or `l` to go up and down a level of nesting in a playlist.
 - `enter` to play a playlist entry in MPV.
 - `q` to exit.
@@ -19,6 +19,8 @@ With both yt-dlp and mpv installed either:
 You can also use:
 - `J` or `K` to move up and down in increments of 10.
 - `v` to play entry in lower resolution format if available.
+- `d` to download the currently selected entry to `~/Downloads` using yt-dlp.
+- `:` to enter a playlist index and jump directly to it.
 - `p` to print the current elements url and exit.
 
 # Examples
@@ -35,3 +37,4 @@ Passing raw MPV and yt-dlp commands:
     pls https://www.youtube.com/@ethoslab/videos --items=12 -r=--ytdl-raw-options=cookies-from-browser=firefox
     
 
+ 
