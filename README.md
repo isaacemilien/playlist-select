@@ -34,7 +34,7 @@ Limiting results to specific amount:
     
 Passing raw MPV and yt-dlp commands:
 
-    pls https://www.youtube.com/@ethoslab/videos --items=12 -r=--ytdl-raw-options=cookies-from-browser=firefox
+    pls https://www.youtube.com/@ethoslab/videos --items=12 -r=ytdl-raw-options=cookies-from-browser=firefox
     
 
  
