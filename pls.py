@@ -124,6 +124,11 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
             case 'p':
                 print("\n\nExit with playlist url: ", playlist[playlist_idx]["url"])
                 sys.exit(0) 
+            case 'w':
+                print("\n\nExit with all playlist urls: ")
+                for i in range(PLAYLIST_LEN):
+                    print(playlist[i]["url"])
+                sys.exit(0) 
             case 'j' | '\033[B':
                 playlist_idx += 1
                 new_selection = True
