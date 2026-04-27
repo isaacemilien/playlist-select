@@ -121,14 +121,6 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
         match key:
             case 'q':
                 sys.exit(0) 
-            case 'p':
-                print("\n\nExit with playlist url: ", playlist[playlist_idx]["url"])
-                sys.exit(0) 
-            case 'w':
-                print("\n\nExit with all playlist urls: ")
-                for i in range(PLAYLIST_LEN):
-                    print(playlist[i]["url"])
-                sys.exit(0) 
             case 'j' | '\033[B':
                 playlist_idx += 1
                 new_selection = True
@@ -177,9 +169,6 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
                 draw(playlist_idx, playlist, playlist_len, "    >")
                 subprocess.run(default_mpv_command + [playlist[playlist_idx]["url"], '-ytdl-format=299+bestaudio'])
                 new_selection = True
-            case 'd':
-                playlist[playlist_idx]["title"] = download_video(playlist[playlist_idx]["url"], playlist[playlist_idx]["title"])
-                new_selection = True
             case ':':
                 user_index = input(":")
                 if user_index.isdigit():
@@ -187,8 +176,22 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
 
                     new_selection = True
 
+                elif user_index == 'p':
+                    print("\n\nExit with playlist url: ", playlist[playlist_idx]["url"])
+                    sys.exit(0) 
+
+                elif user_index == 'w':
+                    print("\n\nExit with all playlist urls: ")
+                    for i in range(PLAYLIST_LEN):
+                        print(playlist[i]["url"])
+                    sys.exit(0) 
+
+                elif user_index == 'd':
+                    playlist[playlist_idx]["title"] = download_video(playlist[playlist_idx]["url"], playlist[playlist_idx]["title"])
+                    new_selection = True
+
                 else:
-                    print("Invalid index")
+                    print("Invalid command")
                     
                     continue
 
