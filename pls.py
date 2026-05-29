@@ -169,6 +169,7 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
                 draw(playlist_idx, playlist, playlist_len, "    >")
                 subprocess.run(default_mpv_command + [playlist[playlist_idx]["url"], '-ytdl-format=299+bestaudio'])
                 new_selection = True
+
             case ':':
                 user_index = input(":")
                 if user_index.isdigit():
@@ -195,6 +196,17 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
                     
                     continue
 
+            case '/':
+                search_text = input("/")
+
+                for i in range(playlist_len):
+                    if search_text in playlist[i]["title"]:
+                        playlist_idx = i
+
+                        new_selection = True
+
+                        break
+
             case _:
                 print(f"No key binding found for key '{key}'.")
 
@@ -214,6 +226,7 @@ sys.argv.pop(0)
 PLAYLIST_URL = sys.argv.pop(0)
 
 playlist_items = 50 
+search_text = ""
 
 default_mpv_command = ['mpv']
 
