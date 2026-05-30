@@ -114,6 +114,10 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
         "playlist_len": len(playlist)})
 
     draw(playlist_idx, playlist, playlist_len)
+    new_selection = False
+    search_text = ""
+    search_result_found = False
+    search_result_seed = -1
     
     while True: 
         key = get_key()
@@ -196,17 +200,29 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
                     
                     continue
 
-            case '/':
-                search_text = input("/")
+            case '/' | 'n' | 'N':
+                if key == '/':
+                    search_text = input("/")
 
-                for i in range(playlist_len):
-                    if search_text in playlist[i]["title"]:
-                        playlist_idx = i
+                    search_result_found = False
+                    search_result_seed = -1
 
-                        new_selection = True
+                    for i in range(playlist_len):
+                        if search_text.lower() in playlist[i]["title"].lower():
+                            search_result_found = True
+                            search_result_seed = i
 
-                        break
+                if search_result_found:
+                    idx = playlist_idx
+                    while not new_selection:
+                        idx = idx - 1 if key == 'N' else idx + 1
+                        idx = idx % playlist_len
 
+                        if search_text.lower() in playlist[idx]["title"].lower():
+                            playlist_idx = idx
+
+                            new_selection = True
+                        
             case _:
                 print(f"No key binding found for key '{key}'.")
 
@@ -226,7 +242,6 @@ sys.argv.pop(0)
 PLAYLIST_URL = sys.argv.pop(0)
 
 playlist_items = 50 
-search_text = ""
 
 default_mpv_command = ['mpv']
 
