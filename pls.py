@@ -6,16 +6,17 @@ import termios
 import tty
 import requests
 
-def download_video(url, title):
+def download_video(url, title, cookies_from_browser):
     """Downloads given url to your downloads folder using yt-dlp
 
     Args:
         url: String URL to be downloaded.
         title: String name given to file once downloaded.
+        cookies_from_browser: String argument to use cookies from given browser in yt-dlp.
     """
 
     print(f"Downloading '{title}' to ~/Downloads/...", end='\r')
-    subprocess.Popen(['yt-dlp', '-o', f'~/Downloads/%(title)s.%(ext)s', url],
+    subprocess.Popen(['yt-dlp', '-o', f'~/Downloads/%(title)s.%(ext)s', url, cookies_from_browser],
                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     return "\t" + title
 
@@ -118,6 +119,11 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
     search_text = ""
     search_result_found = False
     search_result_seed = -1
+    cookies_from_browser = ""
+
+    for command in default_mpv_command:
+        if "cookies-from-browser" in command:
+            cookies_from_browser = "--" + command[command.find("=")+1:]
     
     while True: 
         key = get_key()
@@ -192,7 +198,7 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
                     sys.exit(0) 
 
                 elif user_index == 'd':
-                    playlist[playlist_idx]["title"] = download_video(playlist[playlist_idx]["url"], playlist[playlist_idx]["title"])
+                    playlist[playlist_idx]["title"] = download_video(playlist[playlist_idx]["url"], playlist[playlist_idx]["title"], cookies_from_browser)
                     new_selection = True
 
                 else:
@@ -258,7 +264,6 @@ for arg in sys.argv:
 PLAYLIST = get_playlist_data(PLAYLIST_URL, playlist_items)
 PLAYLIST_LEN = len(PLAYLIST)
 playlist_idx = 0
-
 
 select(PLAYLIST, playlist_idx, PLAYLIST_LEN, default_mpv_command)
 
