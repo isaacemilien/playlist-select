@@ -245,9 +245,11 @@ if len(sys.argv) == 1:
     sys.exit("Usage: pls [OPTIONS] URL [URL...] \n\nplaylist-select: error: You must provide at least one URL.")
 
 sys.argv.pop(0)
-PLAYLIST_URL = sys.argv.pop(0)
+playlist_url = sys.argv.pop(0)
 
 playlist_items = 50 
+
+search = ""
 
 default_mpv_command = ['mpv']
 
@@ -260,8 +262,14 @@ for arg in sys.argv:
                 playlist_items = split_arg[1]
             case "--mpv-raw-options" | "-r":
                 default_mpv_command.append("--" + split_arg[1])
+                
+    if arg == "-yt" or arg == "-sc":
+        search = arg
 
-PLAYLIST = get_playlist_data(PLAYLIST_URL, playlist_items)
+if len(search) > 1:
+    playlist_url = f'{arg[1:]}search{playlist_items}:{playlist_url}'
+
+PLAYLIST = get_playlist_data(playlist_url, playlist_items)
 PLAYLIST_LEN = len(PLAYLIST)
 playlist_idx = 0
 
