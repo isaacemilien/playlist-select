@@ -5,6 +5,10 @@ import sys
 import termios
 import tty
 import requests
+import datetime
+import logging
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename="pls.log", level=logging.INFO)
 
 def download_video(url, title, cookies_from_browser):
     """Downloads given url to your downloads folder using yt-dlp
@@ -130,6 +134,7 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
 
         match key:
             case 'q':
+                logger.info(f"{{'ts': '{datetime.datetime.now(datetime.timezone.utc).isoformat()}', 'level': 'info', 'msg': 'run completed', 'service': 'playlist-select'}}")
                 sys.exit(0) 
             case 'j' | '\033[B':
                 playlist_idx += 1
@@ -189,12 +194,16 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
 
                 elif user_index == 'p':
                     print("\n\nExit with playlist url: ", playlist[playlist_idx]["url"])
+                    logger.info(f"{{'ts': '{datetime.datetime.now(datetime.timezone.utc).isoformat()}', 'level': 'info', 'msg': 'run completed', 'service': 'playlist-select'}}")
+
                     sys.exit(0) 
 
                 elif user_index == 'w':
                     print("\n\nExit with all playlist urls: ")
                     for i in range(PLAYLIST_LEN):
                         print(playlist[i]["url"])
+                    logger.info(f"{{'ts': '{datetime.datetime.now(datetime.timezone.utc).isoformat()}', 'level': 'info', 'msg': 'run completed', 'service': 'playlist-select'}}")
+
                     sys.exit(0) 
 
                 elif user_index == 'd':
@@ -240,6 +249,9 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
             draw(playlist_idx, playlist, playlist_len)
             new_selection = False
 
+
+
+logger.info(f"{{'ts': '{datetime.datetime.now(datetime.timezone.utc).isoformat()}', 'level': 'info', 'msg': 'run started', 'service': 'playlist-select'}}")
 
 if len(sys.argv) == 1:
     sys.exit("Usage: pls [OPTIONS] URL [URL...] \n\nplaylist-select: error: You must provide at least one URL.")
