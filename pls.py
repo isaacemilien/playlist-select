@@ -20,7 +20,7 @@ def download_video(url, title, cookies_from_browser):
     """
 
     print(f"Downloading '{title}' to ~/Downloads/...", end='\r')
-    subprocess.Popen(['yt-dlp', '-o', f'~/Downloads/%(title)s.%(ext)s', url, cookies_from_browser],
+    subprocess.Popen(['yt-dlp', '-4', '-o', f'~/Downloads/%(title)s.%(ext)s', url, cookies_from_browser],
                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     return "\t" + title
 
@@ -52,7 +52,7 @@ def get_playlist_data(url, items = None):
         items: Number representing upper limit of items to fetch from playlist.
     """
 
-    ytdlp_command = ['yt-dlp', '-J', '--flat-playlist', url]
+    ytdlp_command = ['yt-dlp', '-4', '-J', '--flat-playlist', url]
 
     if items is not None: 
         ytdlp_command.extend(['--playlist-items', '1-' + str(items)])
@@ -263,7 +263,7 @@ playlist_items = 50
 
 search = ""
 
-default_mpv_command = ['mpv']
+default_mpv_command = ['mpv', '--ytdl-raw-options=force-ipv4=']
 
 for arg in sys.argv:
     if "=" in arg:
