@@ -21,6 +21,7 @@ You can also use:
 - `v` to play entry in lower resolution format if available.
 - `d` to download the currently selected entry to `~/Downloads` using yt-dlp.
 - `:` to enter a playlist index and jump directly to it.
+- `a` to toggle audio only mode, playing and downloading entries without video.
 - `p` to print the current elements url and exit.
 
 # Examples

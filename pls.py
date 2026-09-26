@@ -10,17 +10,23 @@ import logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(filename="pls.log", level=logging.INFO)
 
-def download_video(url, title, cookies_from_browser):
+def download_video(url, title, cookies_from_browser, audio_only = False):
     """Downloads given url to your downloads folder using yt-dlp
 
     Args:
         url: String URL to be downloaded.
         title: String name given to file once downloaded.
         cookies_from_browser: String argument to use cookies from given browser in yt-dlp.
+        audio_only: Boolean representing whether to extract audio in place of downloading video.
     """
 
+    ytdlp_command = ['yt-dlp', '-4', '-o', f'~/Downloads/%(title)s.%(ext)s', url, cookies_from_browser]
+
+    if audio_only:
+        ytdlp_command.append('-x')
+
     print(f"Downloading '{title}' to ~/Downloads/...", end='\r')
-    subprocess.Popen(['yt-dlp', '-4', '-o', f'~/Downloads/%(title)s.%(ext)s', url, cookies_from_browser],
+    subprocess.Popen(ytdlp_command,
                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     return "\t" + title
 
@@ -112,6 +118,8 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
         default_mpv_command: String representing base mpv and default configurations used in all calls.
     """
 
+    audio_mode = False
+
     playlists = []
     playlists.append({
         "playlist_data": playlist, 
@@ -178,11 +186,25 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
                     new_selection = True
             case '\r':
                 draw(playlist_idx, playlist, playlist_len, "    >")
-                subprocess.run(default_mpv_command + [playlist[playlist_idx]["url"]])
+
+                mpv_command = default_mpv_command + [playlist[playlist_idx]["url"]]
+
+                if audio_mode:
+                    mpv_command.append('--no-video')
+
+                subprocess.run(mpv_command)
                 new_selection = True
             case 'v':
                 draw(playlist_idx, playlist, playlist_len, "    >")
-                subprocess.run(default_mpv_command + [playlist[playlist_idx]["url"], '-ytdl-format=299+bestaudio'])
+
+                mpv_command = default_mpv_command + [playlist[playlist_idx]["url"]]
+
+                if audio_mode:
+                    mpv_command.append('--no-video')
+                else:
+                    mpv_command.append('-ytdl-format=299+bestaudio')
+
+                subprocess.run(mpv_command)
                 new_selection = True
 
             case ':':
@@ -207,7 +229,12 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
                     sys.exit(0) 
 
                 elif user_index == 'd':
-                    playlist[playlist_idx]["title"] = download_video(playlist[playlist_idx]["url"], playlist[playlist_idx]["title"], cookies_from_browser)
+                    playlist[playlist_idx]["title"] = download_video(playlist[playlist_idx]["url"], playlist[playlist_idx]["title"], cookies_from_browser, audio_mode)
+                    new_selection = True
+
+                elif user_index == 'a':
+                    audio_mode = not audio_mode
+
                     new_selection = True
 
                 else:
