@@ -17,7 +17,7 @@ With both yt-dlp and mpv installed either:
 - `q` to exit.
 
 You can also use:
-- `J` or `K` to move up and down in increments of 10.
+- `J` or `K` (or `ctrl+d`/`ctrl+u`) to move up and down in increments of 10.
 - `v` to play entry in lower resolution format if available.
 - `d` to download the currently selected entry to `~/Downloads` using yt-dlp.
 - `:` to enter a playlist index and jump directly to it.

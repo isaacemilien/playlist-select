@@ -150,10 +150,10 @@ def select(playlist, playlist_idx, playlist_len, default_mpv_command):
             case 'k' | '\033[A':
                 playlist_idx -= 1
                 new_selection = True
-            case 'J':
+            case 'J' | '\x04':
                 playlist_idx += 10
                 new_selection = True
-            case 'K':
+            case 'K' | '\x15':
                 playlist_idx -= 10
                 new_selection = True
             case 'l':
